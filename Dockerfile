@@ -1,14 +1,14 @@
-# Use official OpenJDK image
-FROM openjdk:17-jdk-slim
+# Build stage
+FROM eclipse-temurin:17-jdk-jammy as build
 
-# Set working directory
 WORKDIR /app
-
-# Copy source code
 COPY App.java .
-
-# Compile the application
 RUN javac App.java
 
-# Run the application
+# Run stage (lightweight)
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+COPY --from=build /app/App.class .
+
 CMD ["java", "App"]
